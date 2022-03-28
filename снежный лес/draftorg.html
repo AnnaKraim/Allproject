@@ -1,0 +1,141 @@
+<!doctype>
+<html>
+	<head>
+		<meta charset="utf-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+    	<style>
+		body{
+			margin:0;
+			background: #161a1c;
+			width:1366px;
+			height:768px;
+		}
+		#canvas{
+			width:1366px;
+			height:768px;
+			background: #161a1c;
+			z-index: 0;
+		}
+		#frame{
+			z-index: 100;
+			color: #161a1c;
+			position: relative;
+			top: -600px;
+			left: 533px;
+			width:300px;
+		}
+		</style>
+	</head>
+	<body id="body">
+	<main>
+
+				<canvas id="canvas" width="1366px" height="768px"></canvas>
+				<div id="frame" class="card">
+					<div class="card-header">
+						Регистрация
+					</div>
+					<div class="card-body">
+						<form method="post">
+							<input class="form-control" type="text" name="fname" id="fname"><br>
+							<input class="form-control" type="text" name="sname" id="sname"><br>
+							<input class="form-control" type="text" name="passw" id="passw"><br>
+							<input class="btn btn-primary btn-block" type="submit" value="Зарегистрироваться">
+						</form>
+					</div>
+						<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+						<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+				</div>
+	</main>
+	</body>
+</html>
+<script>
+
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
+function draw(){
+
+	ctx.clearRect(0,0,canvas.width,canvas.height);
+	ctx.drawImage(pic, 0,0, 1366, 768)
+	for(var i=0;i<Arr.length;i++){
+		var seg = Arr[i];
+		if (Mouse.x - seg.x > -80 && Mouse.x - seg.x < 0 && Mouse.y - seg.y < 80 && Mouse.y - seg.y > 0) {
+				seg.vx = 3
+				seg.len = 20
+				seg.vy = 1}
+		if (Mouse.x - seg.x < 80 && Mouse.x - seg.x > 0 && Mouse.y - seg.y < 80 && Mouse.y - seg.y > 0) {
+				seg.vx = -3
+				seg.len = 20
+				seg.vy = 1}
+		if (Mouse.x - seg.x > -80 && Mouse.x - seg.x < 0 && Mouse.y - seg.y > -80 && Mouse.y - seg.y < 0) {
+				seg.vy = 4
+				seg.vx = 3
+				seg.len = 20}
+		if (Mouse.x - seg.x < 80 && Mouse.x - seg.x > 0 && Mouse.y - seg.y > -80 && Mouse.y - seg.y < 0) {
+				seg.vy = 4
+				seg.vx = -3
+				seg.len = 20}
+		ctx.drawImage(pict, seg.x - 20, seg.y - 20 , seg.size, seg.size)
+		if (seg.len == 0) {
+			seg.vx = (getRandomInt(9) - 4) / 4
+			seg.vy = (getRandomInt(9) + 1) / 4
+			seg.len = getRandomInt(300) + 100
+		}
+		seg.len = seg.len - 1
+		seg.x = seg.x + seg.vx
+		seg.y = seg.y + seg.vy
+		if (seg.x < 0) {
+			seg.vx = -seg.vx
+			seg.x = 0}
+		if (seg.x > 1368) {
+			seg.vx = -seg.vx
+			seg.x = 1368}
+		if (seg.y > 800) seg.y = -20
+	}
+	pict.rotate(Math.Pi);
+
+}
+window.requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
+var updateCanvas = true;
+function drawLoop(){
+    requestAnimationFrame(drawLoop);
+    if(updateCanvas){
+    	draw();
+    	updateCanvas = false;
+    }
+}
+window.onload = function(){
+	drawLoop();
+};
+
+pic = new Image();
+pic.src = 'les4.jpg'
+
+pict = new Image()
+pict.src = 's.png'
+
+let Arr = []
+var j = 200
+while (j > 0){
+Arr.push({ x : getRandomInt(1366), y : getRandomInt(768), vx : (getRandomInt(5) - 2)/2, vy : (getRandomInt(5) + 1)/2, len : getRandomInt(100)+100, size : getRandomInt(20)+15})
+j = j - 1
+}
+
+var Mouse = {
+	x: canvas.width/2,
+	y: canvas.height/2
+};
+canvas.onmousemove = function(event){	
+	Mouse.x = event.clientX;
+	Mouse.y = event.clientY;
+	updateCanvas = true;
+};
+
+</script>
